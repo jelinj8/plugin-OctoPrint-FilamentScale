@@ -31,6 +31,9 @@
     {{ _('Changes are sent to the scale immediately, without pressing Save. Only calibrated sensors are listed; calibration is done in the') }}
     <a target="_blank" rel="noopener" data-bind="attr: {href: scaleUrl}">{{ _('scale web interface') }} <i class="fas fa-external-link-alt"></i></a>.
 </p>
+<p class="help-block">
+    {{ _('The link opens the scale directly, so it only works when your browser is on the same network as the scale, not from outside (for example through remote access to OctoPrint). The buttons below work from anywhere, because OctoPrint talks to the scale for you.') }}
+</p>
 <div class="alert" data-bind="visible: !online()">{{ _('The scale is offline.') }} <span data-bind="text: error"></span></div>
 <table class="table table-condensed filamentscale-settings" data-bind="visible: online() && rows().length > 0">
     <thead>
@@ -48,7 +51,7 @@
             <td>
                 <div class="input-append">
                     <input type="text" class="input-medium" data-bind="value: labelInput, valueUpdate: 'input', event: {keyup: $parent.renameOnEnter}">
-                    <button class="btn" data-bind="click: $parent.rename, enable: labelInput() !== label()">{{ _('Rename') }}</button>
+                    <button class="btn" data-bind="click: $parent.rename, enable: labelInput() !== label()">{{ _('Set') }}</button>
                 </div>
             </td>
             <td class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams())"></td>

@@ -16,8 +16,16 @@
     white-space: nowrap;
 }
 
+/* OctoPrint makes all tables table-layout: fixed, which gives every column the same width */
+#settings_plugin_filamentscale .filamentscale-settings {
+    table-layout: auto;
+    width: auto;
+}
+
+#settings_plugin_filamentscale .filamentscale-settings th,
 #settings_plugin_filamentscale .filamentscale-settings td {
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 #settings_plugin_filamentscale .filamentscale-settings .input-append {
