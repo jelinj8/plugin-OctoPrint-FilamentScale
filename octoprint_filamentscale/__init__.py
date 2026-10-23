@@ -262,11 +262,35 @@ class FilamentScalePlugin(
             "css": ["css/filamentscale.css"],
         }
 
+    # Software Update: new versions are GitHub releases tagged with the plain version number
+
+    def get_update_information(self):
+        return {
+            "filamentscale": {
+                "displayName": "FilamentScale",
+                "displayVersion": self._plugin_version,
+                "type": "github_release",
+                "user": "jelinj8",
+                "repo": "plugin-OctoPrint-FilamentScale",
+                "current": self._plugin_version,
+                "pip": "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale/archive/{target_version}.zip",
+            }
+        }
+
 
 __plugin_name__ = "FilamentScale"
+__plugin_description__ = "Shows spool weights from a FilamentScale WiFi scale in the OctoPrint sidebar"
+__plugin_author__ = "Jakub Jelínek"
+__plugin_url__ = "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale"
+__plugin_license__ = "AGPL-3.0-or-later"
 __plugin_pythoncompat__ = ">=3,<4"
 
 
 def __plugin_load__():
     global __plugin_implementation__
     __plugin_implementation__ = FilamentScalePlugin()
+
+    global __plugin_hooks__
+    __plugin_hooks__ = {
+        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
+    }

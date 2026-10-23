@@ -1,6 +1,6 @@
 # OctoPrint-FilamentScale
 
-OctoPrint plugin that shows the spool weights from a [FilamentScale](https://forgejo.bliksoft.cz/jjelinek/elektro-ESP32-FilamentScale) WiFi scale in a sidebar panel.
+OctoPrint plugin that shows the spool weights from a [FilamentScale](https://github.com/jelinj8/firmware-FilamentScale) WiFi scale in a sidebar panel.
 
 ![Sidebar panel with five spools and their change since the last save](docs/weights.png)
 
@@ -13,13 +13,13 @@ Buttons in the panel header:
 
 ## Installation
 
-Install into OctoPrint's Python environment:
+In OctoPrint, open Settings → Plugin Manager → Get More, and under "...from URL" enter:
 
 ```
-pip install .
+https://github.com/jelinj8/plugin-OctoPrint-FilamentScale/archive/master.zip
 ```
 
-or, in OctoPrint, open Plugin Manager → Get More → "...from URL" and enter the URL of a zip archive of this repository.
+Or install it into OctoPrint's Python environment with `pip install` and the same URL. Later versions show up in OctoPrint's Software Update.
 
 ## Configuration
 
