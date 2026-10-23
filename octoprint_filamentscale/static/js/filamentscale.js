@@ -84,8 +84,10 @@ $(function () {
             return row;
         };
 
+        // Typographic minus, same as in the deltas; rounding first avoids "−0.0"
         self.formatGrams = function (grams) {
-            return grams.toFixed(1) + " g";
+            var rounded = Math.round(grams * 10) / 10;
+            return (rounded < 0 ? "−" : "") + Math.abs(rounded).toFixed(1) + " g";
         };
 
         // Change since the saved snapshot, empty when nothing is saved for this sensor
