@@ -267,7 +267,7 @@ class FilamentScalePlugin(
     def get_update_information(self):
         return {
             "filamentscale": {
-                "displayName": "FilamentScale",
+                "displayName": "MultiFilamentScale WiFi",
                 "displayVersion": self._plugin_version,
                 "type": "github_release",
                 "user": "jelinj8",
@@ -278,7 +278,7 @@ class FilamentScalePlugin(
         }
 
 
-__plugin_name__ = "FilamentScale"
+__plugin_name__ = "MultiFilamentScale WiFi"
 __plugin_description__ = "Shows spool weights from a FilamentScale WiFi scale in the OctoPrint sidebar"
 __plugin_author__ = "Jakub Jelínek"
 __plugin_url__ = "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale"

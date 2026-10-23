@@ -1,6 +1,6 @@
-# OctoPrint-FilamentScale
+# MultiFilamentScale WiFi (OctoPrint plugin)
 
-OctoPrint plugin that shows the spool weights from a [FilamentScale](https://github.com/jelinj8/firmware-FilamentScale) WiFi scale in a sidebar panel.
+OctoPrint plugin that shows the spool weights from a [FilamentScale](https://github.com/jelinj8/firmware-FilamentScale) WiFi scale, with up to five spools, in a sidebar panel. OctoPrint talks to the scale, so the panel also works over remote access.
 
 ![Sidebar panel with five spools and their change since the last save](docs/weights.png)
 
@@ -23,7 +23,7 @@ Or install it into OctoPrint's Python environment with `pip install` and the sam
 
 ## Configuration
 
-Settings → FilamentScale:
+Settings → MultiFilamentScale WiFi:
 
 ![Plugin settings](docs/setup.png)
 
