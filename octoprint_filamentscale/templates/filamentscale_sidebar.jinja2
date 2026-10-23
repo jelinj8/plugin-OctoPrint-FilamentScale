@@ -7,6 +7,10 @@
 <div data-bind="visible: online(), foreach: sensors">
     <div class="filamentscale-row">
         <span class="filamentscale-label" data-bind="text: label, attr: {title: label}"></span>
+        <span class="filamentscale-delta" data-bind="text: $parent.formatDelta($data)"></span>
         <span class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams)"></span>
     </div>
+</div>
+<div class="filamentscale-saved" data-bind="visible: online() && saved()">
+    <small class="muted">{{ _('Change since') }} <span data-bind="text: savedTime"></span></small>
 </div>

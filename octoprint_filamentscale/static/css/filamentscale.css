@@ -16,8 +16,22 @@
     white-space: nowrap;
 }
 
+#sidebar_plugin_filamentscale .filamentscale-delta {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: #999;
+}
+
+#sidebar_plugin_filamentscale .filamentscale-saved {
+    border-top: 1px solid #ddd;
+    padding-top: 4px;
+}
+
 #sidebar_plugin_filamentscale .filamentscale-grams {
     flex: 0 0 auto;
+    min-width: 5.5em;
+    text-align: right;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }

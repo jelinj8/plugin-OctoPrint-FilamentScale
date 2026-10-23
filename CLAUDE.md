@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An OctoPrint plugin that shows the spool weights reported by the FilamentScale device (sibling project `../FilamentScale`, ESP8266 firmware).
 
-Placement: a slim left sidebar panel (`TemplatePlugin` template type `sidebar`). The navbar was rejected because it is already full. Keep the panel compact: one row per calibrated sensor showing the label and grams.
+Placement: a slim left sidebar panel (`TemplatePlugin` template type `sidebar`). The navbar was rejected because it is already full. Keep the panel compact: one row per calibrated sensor showing the label, the change since the saved snapshot (if any) and the grams.
 
 ## Development
 
@@ -17,13 +17,16 @@ python -m venv venv && venv\Scripts\pip install octoprint && venv\Scripts\pip in
 venv\Scripts\octoprint serve --basedir <temp dir> --port 5055
 ```
 
-Look for `octoprint.plugins.filamentscale` lines in the console log. The plugin's API (`/api/plugin/filamentscale`) answers 403 without a login.
+Look for `octoprint.plugins.filamentscale` lines in the console log. The plugin's API (`/api/plugin/filamentscale`) answers 403 without a login. To call it from a script, GET `/` first to get the `csrf_token_P<port>` cookie, then send it as the `X-CSRF-Token` header on `POST /api/login` and on commands.
+
+To see the UI, Playwright with the installed Edge works (`p.chromium.launch(channel="msedge")`, no browser download). Plain `msedge --headless --screenshot` captures OctoPrint's loading screen. In a fresh test instance, set `accessControl.autologinLocal`/`autologinAs` so the page is logged in. A first-run wizard dialog covers the page; remove `.modal-scrollable` in the page or dispatch clicks directly.
 
 ## Layout
 
-- `octoprint_filamentscale/__init__.py`: the single plugin class. A `RepeatedTimer` polls `/api/weights`, keeps only calibrated sensors, and calls `send_plugin_message` only when the state changes. `on_api_get` returns the cached state, so a newly opened page doesn't have to wait for the next change. Changing settings restarts the timer.
-- `static/js/filamentscale.js`: a Knockout view model bound to `#sidebar_plugin_filamentscale`. It fetches the state on startup or login, then follows plugin messages.
-- `templates/filamentscale_sidebar.jinja2` and `filamentscale_settings.jinja2`: the settings template uses the default settings binding (`settings.plugins.filamentscale.*`). Templates are autoescaped.
+- `octoprint_filamentscale/__init__.py`: the single plugin class. A `RepeatedTimer` polls `/api/weights`, keeps only calibrated sensors, and calls `send_plugin_message` only when the readings change. `on_api_get` returns the cached state, so a newly opened page doesn't have to wait for the next change. The `save`/`clear` API commands manage a snapshot of the weights in `saved.json` in the plugin data folder, so it's shared by all browsers and survives restarts. Every message carries the full state (readings, snapshot, scale URL). Changing settings restarts the timer.
+- `static/js/filamentscale.js`: a Knockout view model bound to `#sidebar_plugin_filamentscale_wrapper`, which covers both the header buttons and the panel body. It fetches the state on startup or login, then follows plugin messages.
+- `templates/`: `filamentscale_sidebar.jinja2` is the panel body. `filamentscale_sidebar_header.jinja2` holds the header buttons (OctoPrint `accordion-heading-button` divs, which float right, so their DOM order is reversed). `filamentscale_settings.jinja2` uses the default settings binding (`settings.plugins.filamentscale.*`). Templates are autoescaped.
+- Sidebar rows are flex rows, not a table: a table with an ellipsis label column squeezed the values to zero width.
 
 ## Device API (source of truth: `../FilamentScale/README.md` and `FilamentScale.ino`)
 

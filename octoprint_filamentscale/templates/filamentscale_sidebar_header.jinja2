@@ -1,0 +1,16 @@
+{# Header buttons float right, so they appear in reverse order #}
+<div class="accordion-heading-button btn-group" data-bind="visible: scaleUrl">
+    <a target="_blank" rel="noopener" data-bind="attr: {href: scaleUrl}" title="{{ _('Open the scale web interface (calibration, names, current values)')|edq }}" aria-label="{{ _('Open the scale web interface')|edq }}">
+        <i class="fas fa-external-link-alt"></i>
+    </a>
+</div>
+<div class="accordion-heading-button btn-group" data-bind="visible: saved">
+    <a href="#" data-bind="click: clearSaved" title="{{ _('Clear the saved weights')|edq }}" aria-label="{{ _('Clear the saved weights')|edq }}">
+        <i class="fas fa-times"></i>
+    </a>
+</div>
+<div class="accordion-heading-button btn-group" data-bind="visible: online">
+    <a href="#" data-bind="click: save" title="{{ _('Save the current weights to show consumption from now on')|edq }}" aria-label="{{ _('Save the current weights')|edq }}">
+        <i class="fas fa-save"></i>
+    </a>
+</div>

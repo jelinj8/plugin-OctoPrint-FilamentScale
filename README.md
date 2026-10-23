@@ -4,6 +4,12 @@ OctoPrint plugin that shows the spool weights from a [FilamentScale](https://for
 
 OctoPrint polls the scale's `/api/weights` endpoint in the background (every 2 s by default) and pushes the readings to every open browser tab. Only calibrated sensors are shown.
 
+Buttons in the panel header:
+
+- **Save** remembers the current weights. Each sensor then also shows its change since the save, for example to watch consumption during a print. The snapshot is stored on the OctoPrint server, so all browsers see the same one and it survives restarts.
+- **Clear** (shown while a snapshot exists) removes the snapshot.
+- **Open** opens the scale's own web interface for calibration, naming spools and setting their current weight. The link uses the configured scale URL, so it only works from browsers that can reach the scale.
+
 ## Installation
 
 Install into OctoPrint's Python environment:
