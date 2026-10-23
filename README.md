@@ -2,6 +2,8 @@
 
 OctoPrint plugin that shows the spool weights from a [FilamentScale](https://forgejo.bliksoft.cz/jjelinek/elektro-ESP32-FilamentScale) WiFi scale in a sidebar panel.
 
+![Sidebar panel with five spools and their change since the last save](docs/weights.png)
+
 OctoPrint polls the scale's `/api/weights` endpoint in the background (every 2 s by default) and pushes the readings to every open browser tab. Only calibrated sensors are shown.
 
 Buttons in the panel header:
@@ -23,6 +25,8 @@ or, in OctoPrint, open Plugin Manager → Get More → "...from URL" and enter t
 ## Configuration
 
 Settings → FilamentScale:
+
+![Plugin settings](docs/setup.png)
 
 - **Scale URL** – defaults to `http://filamentscale.local`. Use the IP address if mDNS does not resolve on the OctoPrint host.
 - **Poll interval** – seconds between requests to the scale.
