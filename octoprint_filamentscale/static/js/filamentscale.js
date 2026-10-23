@@ -9,7 +9,15 @@ $(function () {
         self.error = ko.observable("");
         self.sensors = ko.observableArray([]);
         self.saved = ko.observable(null);
+        self.hidden = ko.observableArray([]);
         self.scaleUrl = ko.observable("");
+
+        self.visibleSensors = ko.pureComputed(function () {
+            var hidden = self.hidden();
+            return _.filter(self.sensors(), function (sensor) {
+                return !_.contains(hidden, sensor.id);
+            });
+        });
 
         // Settings page rows. They are kept across updates (only their observables change),
         // so the inputs aren't re-rendered and cleared while the user is typing.
@@ -20,6 +28,7 @@ $(function () {
             self.error(data.error || "");
             self.sensors(data.sensors || []);
             self.saved(data.saved || null);
+            self.hidden(data.hidden || []);
             self.scaleUrl(data.scaleUrl || "");
             self.syncRows(data.sensors || []);
         };
@@ -33,13 +42,7 @@ $(function () {
             var rows = _.map(sensors, function (sensor) {
                 var row = byId[sensor.id];
                 if (!row) {
-                    return {
-                        id: sensor.id,
-                        label: ko.observable(sensor.label),
-                        grams: ko.observable(sensor.grams),
-                        labelInput: ko.observable(sensor.label),
-                        valueInput: ko.observable("")
-                    };
+                    return self.createRow(sensor);
                 }
                 // Follow a rename made elsewhere, unless the user is editing the name here
                 if (row.labelInput() === row.label()) row.labelInput(sensor.label);
@@ -52,6 +55,33 @@ $(function () {
                 return _.pluck(list, "id").join(",");
             };
             if (ids(rows) !== ids(self.rows())) self.rows(rows);
+        };
+
+        self.createRow = function (sensor) {
+            var row = {
+                id: sensor.id,
+                label: ko.observable(sensor.label),
+                grams: ko.observable(sensor.grams),
+                labelInput: ko.observable(sensor.label),
+                valueInput: ko.observable("")
+            };
+            // The Show checkbox reads the hidden list and writes straight to the server
+            row.shown = ko.pureComputed({
+                read: function () {
+                    return !_.contains(self.hidden(), row.id);
+                },
+                write: function (shown) {
+                    self.command(
+                        "sethidden",
+                        {sensor: row.id, hidden: !shown},
+                        gettext("Could not change the sensor visibility.")
+                    ).fail(function () {
+                        // Put the checkbox back to the actual state
+                        row.shown.notifySubscribers(row.shown());
+                    });
+                }
+            });
+            return row;
         };
 
         self.formatGrams = function (grams) {

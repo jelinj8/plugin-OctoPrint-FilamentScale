@@ -28,6 +28,14 @@
     white-space: nowrap;
 }
 
+#settings_plugin_filamentscale .filamentscale-show {
+    text-align: center;
+}
+
+#settings_plugin_filamentscale .filamentscale-show input {
+    margin: 0;
+}
+
 #settings_plugin_filamentscale .filamentscale-settings .input-append {
     margin-bottom: 0;
 }

@@ -33,11 +33,12 @@ Settings → FilamentScale:
 
 Below these settings is a list of the calibrated sensors. For each one you can:
 
+- **Show** or hide it in the sidebar, for example when only some positions are in use.
 - **Rename** it. Names are limited to 31 bytes on the scale, so longer names are shortened.
 - **Tare** it: the current reading becomes 0 g.
 - **Set current weight**: enter how much filament is left, and the scale counts down from there.
 
-These changes are sent to the scale immediately and need OctoPrint's Settings permission. Calibration stays in the scale's own web interface, linked from the same page. That link opens the scale directly, so it only works from a browser on the scale's network, unlike the buttons, which go through OctoPrint.
+These changes apply immediately, without the dialog's Save, and need OctoPrint's Settings permission. Calibration stays in the scale's own web interface, linked from the same page. That link opens the scale directly, so it only works from a browser on the scale's network, unlike the buttons, which go through OctoPrint.
 
 ## Development
 

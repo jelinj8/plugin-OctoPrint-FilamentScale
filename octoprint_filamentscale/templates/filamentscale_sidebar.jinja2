@@ -4,13 +4,16 @@
 <div data-bind="visible: online() && sensors().length === 0">
     <small class="muted">{{ _('No calibrated sensors') }}</small>
 </div>
-<div data-bind="visible: online(), foreach: sensors">
+<div data-bind="visible: online() && sensors().length > 0 && visibleSensors().length === 0">
+    <small class="muted">{{ _('All sensors are hidden in the settings') }}</small>
+</div>
+<div data-bind="visible: online(), foreach: visibleSensors">
     <div class="filamentscale-row">
         <span class="filamentscale-label" data-bind="text: label, attr: {title: label}"></span>
         <span class="filamentscale-delta" data-bind="text: $parent.formatDelta($data)"></span>
         <span class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams)"></span>
     </div>
 </div>
-<div class="filamentscale-saved" data-bind="visible: online() && saved()">
+<div class="filamentscale-saved" data-bind="visible: online() && saved() && visibleSensors().length > 0">
     <small class="muted">{{ _('Change since') }} <span data-bind="text: savedTime"></span></small>
 </div>

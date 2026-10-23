@@ -29,11 +29,15 @@ class FilamentScalePlugin(
         self._readings = {"online": False, "error": "Not polled yet", "sensors": []}
         # Snapshot taken with the Save button: {"time": epoch, "grams": {"<id>": grams}}
         self._saved = None
+        # Sensor ids hidden from the sidebar. Kept in the data folder, not in the settings,
+        # because the settings dialog's Save would write back a stale copy.
+        self._hidden = []
 
     # Polling
 
     def on_after_startup(self):
-        self._saved = self._load_saved()
+        self._saved = self._load_json("saved.json", None)
+        self._hidden = self._load_json("hidden.json", [])
         self._start_polling()
 
     def on_shutdown(self):
@@ -86,32 +90,35 @@ class FilamentScalePlugin(
 
     def _payload(self):
         """Full state for the frontend. Call with self._lock held."""
-        return dict(self._readings, saved=self._saved, scaleUrl=self._scale_url())
+        return dict(
+            self._readings,
+            saved=self._saved,
+            hidden=self._hidden,
+            scaleUrl=self._scale_url(),
+        )
 
-    # Saved snapshot
+    # State files in the plugin data folder
 
-    def _saved_path(self):
-        return os.path.join(self.get_plugin_data_folder(), "saved.json")
-
-    def _load_saved(self):
+    def _load_json(self, name, default):
         try:
-            with open(self._saved_path(), encoding="utf-8") as f:
+            with open(os.path.join(self.get_plugin_data_folder(), name), encoding="utf-8") as f:
                 return json.load(f)
         except FileNotFoundError:
-            return None
+            return default
         except Exception:
-            self._logger.exception("Could not read the saved weights, ignoring them")
-            return None
+            self._logger.exception("Could not read %s, ignoring it", name)
+            return default
 
-    def _store_saved(self, saved):
-        path = self._saved_path()
-        if saved is None:
+    def _store_json(self, name, value):
+        """Write value to the data folder atomically; None removes the file."""
+        path = os.path.join(self.get_plugin_data_folder(), name)
+        if value is None:
             if os.path.exists(path):
                 os.remove(path)
             return
         tmp = path + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(saved, f)
+            json.dump(value, f)
         os.replace(tmp, path)
 
     # SimpleApiPlugin: current state for a freshly loaded page, the Save/Clear commands,
@@ -131,11 +138,14 @@ class FilamentScalePlugin(
             "tare": ["sensor"],
             "setlabel": ["sensor", "label"],
             "setvalue": ["sensor", "grams"],
+            "sethidden": ["sensor", "hidden"],
         }
 
     def on_api_command(self, command, data):
         if command in ("tare", "setlabel", "setvalue"):
             return self._scale_command(command, data)
+        if command == "sethidden":
+            return self._set_hidden(data)
 
         with self._lock:
             if command == "save":
@@ -147,8 +157,29 @@ class FilamentScalePlugin(
                 }
             else:
                 saved = None
-            self._store_saved(saved)
+            self._store_json("saved.json", saved)
             self._saved = saved
+            payload = self._payload()
+
+        self._plugin_manager.send_plugin_message(self._identifier, payload)
+        return flask.jsonify(payload)
+
+    def _set_hidden(self, data):
+        if not Permissions.SETTINGS.can():
+            return self._error(403, "Hiding sensors needs the Settings permission")
+        try:
+            sensor = int(data["sensor"])
+        except (TypeError, ValueError):
+            return self._error(400, "Invalid parameters")
+
+        with self._lock:
+            hidden = set(self._hidden)
+            if data["hidden"]:
+                hidden.add(sensor)
+            else:
+                hidden.discard(sensor)
+            self._hidden = sorted(hidden)
+            self._store_json("hidden.json", self._hidden)
             payload = self._payload()
 
         self._plugin_manager.send_plugin_message(self._identifier, payload)

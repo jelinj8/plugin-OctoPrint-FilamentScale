@@ -28,7 +28,7 @@
 
 <h4>{{ _('Sensors') }}</h4>
 <p class="help-block">
-    {{ _('Changes are sent to the scale immediately, without pressing Save. Only calibrated sensors are listed; calibration is done in the') }}
+    {{ _('Changes in this table apply immediately, without pressing Save. Unchecking Show hides a sensor from the sidebar. Only calibrated sensors are listed; calibration is done in the') }}
     <a target="_blank" rel="noopener" data-bind="attr: {href: scaleUrl}">{{ _('scale web interface') }} <i class="fas fa-external-link-alt"></i></a>.
 </p>
 <p class="help-block">
@@ -39,6 +39,7 @@
     <thead>
         <tr>
             <th>#</th>
+            <th>{{ _('Show') }}</th>
             <th>{{ _('Name') }}</th>
             <th class="filamentscale-grams">{{ _('Weight') }}</th>
             <th></th>
@@ -48,6 +49,7 @@
     <tbody data-bind="foreach: rows">
         <tr>
             <td data-bind="text: id"></td>
+            <td class="filamentscale-show"><input type="checkbox" data-bind="checked: shown" title="{{ _('Show this sensor in the sidebar')|edq }}"></td>
             <td>
                 <div class="input-append">
                     <input type="text" class="input-medium" data-bind="value: labelInput, valueUpdate: 'input', event: {keyup: $parent.renameOnEnter}">
