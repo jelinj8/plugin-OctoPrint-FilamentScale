@@ -30,6 +30,7 @@ To see the UI, Playwright with the installed Edge works (`p.chromium.launch(chan
 - `static/js/filamentscale.js`: one Knockout view model, bound to both `#sidebar_plugin_filamentscale_wrapper` (header buttons and panel body) and `#settings_plugin_filamentscale`. It fetches the state on startup or login, then follows plugin messages. The settings rows (`rows`) are kept across updates and only their observables change; replacing them would re-render the inputs and wipe what the user is typing.
 - `templates/`: `filamentscale_sidebar.jinja2` is the panel body. `filamentscale_sidebar_header.jinja2` holds the header buttons (OctoPrint `accordion-heading-button` divs, which float right, so their DOM order is reversed). `filamentscale_settings.jinja2` uses custom bindings, so plugin settings are reached as `settingsViewModel.settings.plugins.filamentscale.*`. Templates are autoescaped.
 - Sidebar rows are flex rows, not a table: a table with an ellipsis label column squeezed the values to zero width.
+- OctoPrint sets `table-layout: fixed` on every table, which gives all columns equal widths. The settings sensor table overrides it with `table-layout: auto; width: auto`. Check layout changes in a real browser: measure with Playwright, since screenshots of the settings dialog don't render in headless mode.
 
 ## Device API (source of truth: `../FilamentScale/README.md` and `FilamentScale.ino`)
 
