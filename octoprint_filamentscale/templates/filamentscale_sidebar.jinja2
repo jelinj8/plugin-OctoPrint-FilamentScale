@@ -4,11 +4,9 @@
 <div data-bind="visible: online() && sensors().length === 0">
     <small class="muted">{{ _('No calibrated sensors') }}</small>
 </div>
-<table class="table table-condensed filamentscale-table" data-bind="visible: online() && sensors().length > 0">
-    <tbody data-bind="foreach: sensors">
-        <tr>
-            <td data-bind="text: label, attr: {title: label}"></td>
-            <td class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams)"></td>
-        </tr>
-    </tbody>
-</table>
+<div data-bind="visible: online(), foreach: sensors">
+    <div class="filamentscale-row">
+        <span class="filamentscale-label" data-bind="text: label, attr: {title: label}"></span>
+        <span class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams)"></span>
+    </div>
+</div>

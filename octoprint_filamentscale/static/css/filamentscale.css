@@ -1,17 +1,23 @@
-#sidebar_plugin_filamentscale .filamentscale-table {
-    margin-bottom: 0;
+#sidebar_plugin_filamentscale .filamentscale-row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
 }
 
-#sidebar_plugin_filamentscale .filamentscale-table td:first-child {
-    width: 100%;
+#sidebar_plugin_filamentscale .filamentscale-row + .filamentscale-row {
+    border-top: 1px solid #ddd;
+}
+
+#sidebar_plugin_filamentscale .filamentscale-label {
+    flex: 1 1 auto;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 0;
 }
 
 #sidebar_plugin_filamentscale .filamentscale-grams {
-    text-align: right;
+    flex: 0 0 auto;
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
 }
