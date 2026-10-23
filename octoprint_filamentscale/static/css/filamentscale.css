@@ -16,6 +16,20 @@
     white-space: nowrap;
 }
 
+#settings_plugin_filamentscale .filamentscale-settings td {
+    vertical-align: middle;
+}
+
+#settings_plugin_filamentscale .filamentscale-settings .input-append {
+    margin-bottom: 0;
+}
+
+#settings_plugin_filamentscale .filamentscale-grams {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 #sidebar_plugin_filamentscale .filamentscale-delta {
     flex: 0 0 auto;
     white-space: nowrap;

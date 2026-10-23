@@ -2,7 +2,7 @@
     <div class="control-group">
         <label class="control-label">{{ _('Scale URL') }}</label>
         <div class="controls">
-            <input type="text" class="input-xlarge" data-bind="value: settings.plugins.filamentscale.url">
+            <input type="text" class="input-xlarge" data-bind="value: settingsViewModel.settings.plugins.filamentscale.url">
             <span class="help-block">{{ _('For example http://filamentscale.local or http://192.168.1.50. Use the IP address if mDNS does not resolve on the OctoPrint host.') }}</span>
         </div>
     </div>
@@ -10,7 +10,7 @@
         <label class="control-label">{{ _('Poll interval') }}</label>
         <div class="controls">
             <div class="input-append">
-                <input type="number" min="1" step="0.5" class="input-mini" data-bind="value: settings.plugins.filamentscale.interval">
+                <input type="number" min="1" step="0.5" class="input-mini" data-bind="value: settingsViewModel.settings.plugins.filamentscale.interval">
                 <span class="add-on">s</span>
             </div>
         </div>
@@ -19,9 +19,47 @@
         <label class="control-label">{{ _('Request timeout') }}</label>
         <div class="controls">
             <div class="input-append">
-                <input type="number" min="0.5" step="0.5" class="input-mini" data-bind="value: settings.plugins.filamentscale.timeout">
+                <input type="number" min="0.5" step="0.5" class="input-mini" data-bind="value: settingsViewModel.settings.plugins.filamentscale.timeout">
                 <span class="add-on">s</span>
             </div>
         </div>
     </div>
 </form>
+
+<h4>{{ _('Sensors') }}</h4>
+<p class="help-block">
+    {{ _('Changes are sent to the scale immediately, without pressing Save. Only calibrated sensors are listed; calibration is done in the') }}
+    <a target="_blank" rel="noopener" data-bind="attr: {href: scaleUrl}">{{ _('scale web interface') }} <i class="fas fa-external-link-alt"></i></a>.
+</p>
+<div class="alert" data-bind="visible: !online()">{{ _('The scale is offline.') }} <span data-bind="text: error"></span></div>
+<table class="table table-condensed filamentscale-settings" data-bind="visible: online() && rows().length > 0">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>{{ _('Name') }}</th>
+            <th class="filamentscale-grams">{{ _('Weight') }}</th>
+            <th></th>
+            <th>{{ _('Set current weight') }}</th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: rows">
+        <tr>
+            <td data-bind="text: id"></td>
+            <td>
+                <div class="input-append">
+                    <input type="text" class="input-medium" data-bind="value: labelInput, valueUpdate: 'input', event: {keyup: $parent.renameOnEnter}">
+                    <button class="btn" data-bind="click: $parent.rename, enable: labelInput() !== label()">{{ _('Rename') }}</button>
+                </div>
+            </td>
+            <td class="filamentscale-grams" data-bind="text: $parent.formatGrams(grams())"></td>
+            <td><button class="btn" data-bind="click: $parent.tare" title="{{ _('Set the current reading to 0 g')|edq }}">{{ _('Tare') }}</button></td>
+            <td>
+                <div class="input-append">
+                    <input type="number" step="0.1" class="input-mini" data-bind="value: valueInput, valueUpdate: 'input', event: {keyup: $parent.setValueOnEnter}">
+                    <span class="add-on">g</span>
+                    <button class="btn" data-bind="click: $parent.setValue, enable: valueInput() !== ''">{{ _('Set') }}</button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

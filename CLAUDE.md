@@ -19,13 +19,16 @@ venv\Scripts\octoprint serve --basedir <temp dir> --port 5055
 
 Look for `octoprint.plugins.filamentscale` lines in the console log. The plugin's API (`/api/plugin/filamentscale`) answers 403 without a login. To call it from a script, GET `/` first to get the `csrf_token_P<port>` cookie, then send it as the `X-CSRF-Token` header on `POST /api/login` and on commands.
 
+Never test tare/setlabel/setvalue against a scale that is in use: they overwrite its spool readings and names. Point the test instance at a small mock HTTP server that mimics the firmware endpoints instead.
+
 To see the UI, Playwright with the installed Edge works (`p.chromium.launch(channel="msedge")`, no browser download). Plain `msedge --headless --screenshot` captures OctoPrint's loading screen. In a fresh test instance, set `accessControl.autologinLocal`/`autologinAs` so the page is logged in. A first-run wizard dialog covers the page; remove `.modal-scrollable` in the page or dispatch clicks directly.
 
 ## Layout
 
 - `octoprint_filamentscale/__init__.py`: the single plugin class. A `RepeatedTimer` polls `/api/weights`, keeps only calibrated sensors, and calls `send_plugin_message` only when the readings change. `on_api_get` returns the cached state, so a newly opened page doesn't have to wait for the next change. The `save`/`clear` API commands manage a snapshot of the weights in `saved.json` in the plugin data folder, so it's shared by all browsers and survives restarts. Every message carries the full state (readings, snapshot, scale URL). Changing settings restarts the timer.
-- `static/js/filamentscale.js`: a Knockout view model bound to `#sidebar_plugin_filamentscale_wrapper`, which covers both the header buttons and the panel body. It fetches the state on startup or login, then follows plugin messages.
-- `templates/`: `filamentscale_sidebar.jinja2` is the panel body. `filamentscale_sidebar_header.jinja2` holds the header buttons (OctoPrint `accordion-heading-button` divs, which float right, so their DOM order is reversed). `filamentscale_settings.jinja2` uses the default settings binding (`settings.plugins.filamentscale.*`). Templates are autoescaped.
+- The `tare`/`setlabel`/`setvalue` API commands are forwarded to the scale's own API and need `Permissions.SETTINGS`. Labels are cut to 31 UTF-8 bytes on a character boundary first, because the firmware's `char[32]` would cut a multi-byte character in half. Calibration deliberately stays in the firmware web UI, which the settings page links to.
+- `static/js/filamentscale.js`: one Knockout view model, bound to both `#sidebar_plugin_filamentscale_wrapper` (header buttons and panel body) and `#settings_plugin_filamentscale`. It fetches the state on startup or login, then follows plugin messages. The settings rows (`rows`) are kept across updates and only their observables change; replacing them would re-render the inputs and wipe what the user is typing.
+- `templates/`: `filamentscale_sidebar.jinja2` is the panel body. `filamentscale_sidebar_header.jinja2` holds the header buttons (OctoPrint `accordion-heading-button` divs, which float right, so their DOM order is reversed). `filamentscale_settings.jinja2` uses custom bindings, so plugin settings are reached as `settingsViewModel.settings.plugins.filamentscale.*`. Templates are autoescaped.
 - Sidebar rows are flex rows, not a table: a table with an ellipsis label column squeezed the values to zero width.
 
 ## Device API (source of truth: `../FilamentScale/README.md` and `FilamentScale.ino`)

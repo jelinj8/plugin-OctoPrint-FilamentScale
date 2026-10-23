@@ -10,7 +10,6 @@ Buttons in the panel header:
 
 - **Save** remembers the current weights. Each sensor then also shows its change since the save, for example to watch consumption during a print. The snapshot is stored on the OctoPrint server, so all browsers see the same one and it survives restarts.
 - **Clear** (shown while a snapshot exists) removes the snapshot.
-- **Open** opens the scale's own web interface for calibration, naming spools and setting their current weight. The link uses the configured scale URL, so it only works from browsers that can reach the scale.
 
 ## Installation
 
@@ -31,6 +30,14 @@ Settings → FilamentScale:
 - **Scale URL** – defaults to `http://filamentscale.local`. Use the IP address if mDNS does not resolve on the OctoPrint host.
 - **Poll interval** – seconds between requests to the scale.
 - **Request timeout** – seconds to wait for the scale before marking it offline.
+
+Below these settings is a list of the calibrated sensors. For each one you can:
+
+- **Rename** it. Names are limited to 31 bytes on the scale, so longer names are shortened.
+- **Tare** it: the current reading becomes 0 g.
+- **Set current weight**: enter how much filament is left, and the scale counts down from there.
+
+These changes are sent to the scale immediately and need OctoPrint's Settings permission. Calibration stays in the scale's own web interface, linked from the same page.
 
 ## Development
 

@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import threading
 import time
@@ -7,7 +8,11 @@ import flask
 import requests
 
 import octoprint.plugin
+from octoprint.access.permissions import Permissions
 from octoprint.util import RepeatedTimer
+
+# The firmware stores labels in char[32] and cuts them at the byte limit
+LABEL_MAX_BYTES = 31
 
 
 class FilamentScalePlugin(
@@ -109,7 +114,8 @@ class FilamentScalePlugin(
             json.dump(saved, f)
         os.replace(tmp, path)
 
-    # SimpleApiPlugin: current state for a freshly loaded page, plus the Save/Clear commands
+    # SimpleApiPlugin: current state for a freshly loaded page, the Save/Clear commands,
+    # and the scale commands from the settings page
 
     def is_api_protected(self):
         return True
@@ -119,13 +125,22 @@ class FilamentScalePlugin(
             return flask.jsonify(self._payload())
 
     def get_api_commands(self):
-        return {"save": [], "clear": []}
+        return {
+            "save": [],
+            "clear": [],
+            "tare": ["sensor"],
+            "setlabel": ["sensor", "label"],
+            "setvalue": ["sensor", "grams"],
+        }
 
     def on_api_command(self, command, data):
+        if command in ("tare", "setlabel", "setvalue"):
+            return self._scale_command(command, data)
+
         with self._lock:
             if command == "save":
                 if not self._readings["online"]:
-                    flask.abort(409, description="The scale is offline")
+                    return self._error(409, "The scale is offline")
                 saved = {
                     "time": time.time(),
                     "grams": {str(s["id"]): s["grams"] for s in self._readings["sensors"]},
@@ -138,6 +153,45 @@ class FilamentScalePlugin(
 
         self._plugin_manager.send_plugin_message(self._identifier, payload)
         return flask.jsonify(payload)
+
+    def _scale_command(self, command, data):
+        """Forward tare/setlabel/setvalue to the scale's own API."""
+        if not Permissions.SETTINGS.can():
+            return self._error(403, "Changing the scale needs the Settings permission")
+
+        try:
+            body = {"sensor": int(data["sensor"])}
+            if command == "setlabel":
+                label = str(data["label"]).strip().encode("utf-8")[:LABEL_MAX_BYTES]
+                body["label"] = label.decode("utf-8", "ignore")
+            elif command == "setvalue":
+                body["grams"] = float(data["grams"])
+                if not math.isfinite(body["grams"]):
+                    raise ValueError
+        except (TypeError, ValueError):
+            return self._error(400, "Invalid parameters")
+
+        try:
+            response = requests.post(
+                self._scale_url() + "/api/" + command,
+                json=body,
+                timeout=self._settings.get_float(["timeout"]),
+            )
+            result = response.json()
+        except Exception as e:
+            return self._error(502, "The scale is not reachable: {}".format(e))
+        if not result.get("success"):
+            return self._error(400, "The scale refused it: {}".format(result.get("error", "unknown error")))
+
+        self._logger.info("Scale command %s %r done", command, body)
+        # Show the result right away instead of waiting for the next poll
+        self._poll()
+        with self._lock:
+            return flask.jsonify(self._payload())
+
+    @staticmethod
+    def _error(status, message):
+        return flask.make_response(flask.jsonify(error=message), status)
 
     # SettingsPlugin
 
@@ -165,7 +219,7 @@ class FilamentScalePlugin(
                 "icon": "balance-scale",
                 "template_header": "filamentscale_sidebar_header.jinja2",
             },
-            {"type": "settings", "custom_bindings": False},
+            {"type": "settings", "custom_bindings": True},
         ]
 
     def is_template_autoescaped(self):
