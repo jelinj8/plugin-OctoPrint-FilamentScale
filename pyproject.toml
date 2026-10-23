@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OctoPrint-FilamentScale"
+version = "0.1.0"
+description = "Shows spool weights from a FilamentScale WiFi scale in the OctoPrint sidebar"
+readme = "README.md"
+requires-python = ">=3.7"
+authors = [{ name = "Jakub Jelínek", email = "jakub.jelinek@bliksoft.cz" }]
+license = { text = "AGPL-3.0-or-later" }
+dependencies = []
+
+[project.entry-points."octoprint.plugin"]
+filamentscale = "octoprint_filamentscale"
+
+[tool.setuptools]
+packages = ["octoprint_filamentscale"]
+
+[tool.setuptools.package-data]
+octoprint_filamentscale = ["templates/*", "static/js/*", "static/css/*"]

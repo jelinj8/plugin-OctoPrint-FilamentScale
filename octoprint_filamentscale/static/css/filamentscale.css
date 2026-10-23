@@ -1,0 +1,17 @@
+#sidebar_plugin_filamentscale .filamentscale-table {
+    margin-bottom: 0;
+}
+
+#sidebar_plugin_filamentscale .filamentscale-table td:first-child {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
+}
+
+#sidebar_plugin_filamentscale .filamentscale-grams {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}

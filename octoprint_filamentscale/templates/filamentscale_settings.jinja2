@@ -1,0 +1,27 @@
+<form class="form-horizontal" onsubmit="return false;">
+    <div class="control-group">
+        <label class="control-label">{{ _('Scale URL') }}</label>
+        <div class="controls">
+            <input type="text" class="input-xlarge" data-bind="value: settings.plugins.filamentscale.url">
+            <span class="help-block">{{ _('For example http://filamentscale.local or http://192.168.1.50. Use the IP address if mDNS does not resolve on the OctoPrint host.') }}</span>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">{{ _('Poll interval') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" min="1" step="0.5" class="input-mini" data-bind="value: settings.plugins.filamentscale.interval">
+                <span class="add-on">s</span>
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">{{ _('Request timeout') }}</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" min="0.5" step="0.5" class="input-mini" data-bind="value: settings.plugins.filamentscale.timeout">
+                <span class="add-on">s</span>
+            </div>
+        </div>
+    </div>
+</form>
