@@ -283,7 +283,7 @@ __plugin_description__ = "Shows spool weights from a FilamentScale WiFi scale in
 __plugin_author__ = "Jakub Jelínek"
 __plugin_url__ = "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale"
 __plugin_license__ = "AGPL-3.0-or-later"
-__plugin_pythoncompat__ = ">=3,<4"
+__plugin_pythoncompat__ = ">=3.7,<4"
 
 
 def __plugin_load__():
