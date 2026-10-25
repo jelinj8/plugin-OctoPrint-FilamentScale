@@ -1,26 +1,37 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "OctoPrint-FilamentScale"
-version = "0.5.1"
+version = "0.5.2"
 description = "Shows spool weights from a FilamentScale WiFi scale in the OctoPrint sidebar"
-readme = "README.md"
-requires-python = ">=3.7"
-authors = [{ name = "Jakub Jelínek", email = "jakub.jelinek@bliksoft.cz" }]
-license = { text = "AGPL-3.0-or-later" }
+authors = [
+    {name = "Jakub Jelínek", email = "jakub.jelinek@bliksoft.cz"}
+]
+readme = {file = "README.md", content-type = "text/markdown"}
+# the license is set in setup.py, to stay compatible with setuptools<77
+dynamic = [
+    "license"
+]
+
+requires-python = ">=3.7, <4"
+
+# any additional requirements (besides OctoPrint) should be listed here
 dependencies = []
 
-[project.urls]
-Homepage = "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale"
-Firmware = "https://github.com/jelinj8/firmware-FilamentScale"
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = [
+    "octoprint_filamentscale",
+    "octoprint_filamentscale.*"
+]
 
 [project.entry-points."octoprint.plugin"]
 filamentscale = "octoprint_filamentscale"
 
-[tool.setuptools]
-packages = ["octoprint_filamentscale"]
-
-[tool.setuptools.package-data]
-octoprint_filamentscale = ["templates/*", "static/js/*", "static/css/*"]
+[project.urls]
+Homepage = "https://github.com/jelinj8/plugin-OctoPrint-FilamentScale"
+Firmware = "https://github.com/jelinj8/firmware-FilamentScale"

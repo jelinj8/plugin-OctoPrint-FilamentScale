@@ -1,0 +1,3 @@
+include README.md
+recursive-include octoprint_filamentscale/templates *
+recursive-include octoprint_filamentscale/static *

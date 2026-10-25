@@ -21,6 +21,8 @@ Look for `octoprint.plugins.filamentscale` lines in the console log. The plugin'
 
 Never test tare/setlabel/setvalue against a scale that is in use: they overwrite its spool readings and names. Point the test instance at a small mock HTTP server that mimics the firmware endpoints instead.
 
+Packaging follows the OctoPrint cookiecutter template (the plugin registry reviewers ask for it): the license is declared `dynamic` in `pyproject.toml` and set in `setup.py`, so setuptools<77 can still build the plugin. `MANIFEST.in` and `include-package-data` ship the templates and static files. Releases are GitHub releases tagged with the plain version from `pyproject.toml`, which the Software Update hook checks.
+
 To see the UI, Playwright with the installed Edge works (`p.chromium.launch(channel="msedge")`, no browser download). Plain `msedge --headless --screenshot` captures OctoPrint's loading screen. In a fresh test instance, set `accessControl.autologinLocal`/`autologinAs` so the page is logged in. A first-run wizard dialog covers the page; remove `.modal-scrollable` in the page or dispatch clicks directly.
 
 ## Layout
