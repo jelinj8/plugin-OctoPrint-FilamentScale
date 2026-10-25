@@ -116,7 +116,9 @@ $(function () {
                     var detail = xhr.responseJSON && xhr.responseJSON.error;
                     new PNotify({
                         title: "FilamentScale",
+                        // The detail can come from the scale, so never treat it as HTML
                         text: detail ? errorText + " " + detail : errorText,
+                        text_escape: true,
                         type: "error"
                     });
                 });
